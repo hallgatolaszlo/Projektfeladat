@@ -1,0 +1,136 @@
+﻿<Window x:Class="WPFNepesseg.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPFNepesseg"
+        mc:Ignorable="d"
+        Title="Magyarország településeinek népessége" Height="700" Width="1300  ">
+    <Window.Resources>
+        <Style x:Key="RightAlignedCellStyle" TargetType="TextBlock">
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="Margin" Value="0,0,5,0"/>
+        </Style>
+    </Window.Resources>
+    <!-- A főablak GRID rácsban -->
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="1.3*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60"/>
+            <RowDefinition Height="60"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+
+        <!--Szűrési feltételek -->
+        <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"
+                Background="BlanchedAlmond" CornerRadius="20 20 0 0" Margin="6 2">
+
+            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10 0">
+                <TextBlock Text="Szűrés a vármegye kódjára:" FontSize="16" VerticalAlignment="Center"/>
+
+                <ComboBox x:Name="cbTelepulesek" SelectedIndex="0"
+                          Width="200" Margin="10" FontSize="16" VerticalAlignment="Center" SelectionChanged="cbTelepulesek_SelectionChanged"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Szűrések eredménye -->
+        <Border Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3"
+                Background="BlanchedAlmond" CornerRadius="0 0 20 20" Margin="6 2">
+            <StackPanel Orientation="Horizontal" Margin="10" VerticalAlignment="Center">
+                <TextBlock Text="Települések száma:" FontSize="16"/>
+                <TextBlock x:Name="tbSzuresiTelepulesekSzama" 
+                           Text="■ db" FontSize="16" Margin="10 0 40 0"/>
+                <TextBlock Text="Lakosok száma 2024-ben:" FontSize="16"/>
+                <TextBlock x:Name="tbSzuresiLakossagSzama2024" 
+                           Text="■ fő" FontSize="16" Margin="10 0 40 0"/>
+                <TextBlock Text="Lakosok száma 2025-ben:" FontSize="16"/>
+                <TextBlock x:Name="tbSzuresiLakossagSzama2025" 
+                           Text="■ fő" FontSize="16" Margin="10 0 40 0"/>
+            </StackPanel>
+        </Border>
+
+        <!--Települések táblázata-->
+        <DataGrid x:Name="dgTelepulesek" 
+                  Grid.Row="2" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2"
+                  AutoGenerateColumns="False" IsReadOnly="True"
+                  FontSize="15" Margin="6"
+                  Background="LightYellow" 
+                  SelectionChanged="dgTelepulesek_SelectionChanged"
+                  ItemsSource="{Binding}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Település" Binding="{Binding TelepulesNev}"/>
+                <DataGridTextColumn Header="Népesség 2024-ben" 
+                                    ElementStyle="{StaticResource RightAlignedCellStyle}"
+                                    Binding="{Binding Lakosok2024, StringFormat={}{0:N0} fő}"/>
+                <DataGridTextColumn Header="Népesség 2025-ben" 
+                                    ElementStyle="{StaticResource RightAlignedCellStyle}"
+                                    Binding="{Binding Lakosok2025, StringFormat={}{0:N0} fő}"/>
+                <DataGridTextColumn Header="Változás" 
+                                    ElementStyle="{StaticResource RightAlignedCellStyle}"
+                                    Binding="{Binding Valtozas, StringFormat={}{0:N0} fő}"/>
+                <DataGridTextColumn Header="Változás %-ban" 
+                                    ElementStyle="{StaticResource RightAlignedCellStyle}"
+                                    Binding="{Binding ValtozasSzazalekban, StringFormat={}{0:F2} %}"/>
+
+                <DataGridCheckBoxColumn Header="Városnak számít?" 
+                                    Binding="{Binding VarosTipusuTelepules, Mode=OneWay}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- Kiválasztott település további adatai -->
+        <Border Grid.Row="2" Grid.Column="2" BorderBrush="Brown" BorderThickness="3px" 
+                Background="LightYellow" Margin="6 2" CornerRadius="20,20,20,20">
+
+            <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="15">
+                <TextBlock Text="Kiválasztott település adatai" FontSize="20" 
+                           FontWeight="Bold" HorizontalAlignment="Center"/>
+                <TextBlock Text="Neve:" FontSize="16"/>
+                <TextBlock x:Name="tbValasztottTelepules" FontSize="16" FontWeight="Bold"/>
+                <TextBlock Text="Típusa:" FontSize="16"/>
+                <TextBlock x:Name="tbValasztottTelepulesTipus" FontSize="16" FontWeight="Bold"/>
+                <StackPanel Orientation="Horizontal" Margin="0 10">
+                    <TextBlock Text="Népesség 2024-ben:" FontSize="16"/>
+                    <TextBlock x:Name="tbValasztottTelepulesNok2024" 
+                               FontSize="16" FontWeight="Bold" Margin="20 0 20 0"/>
+                    <TextBlock x:Name="tbValasztottTelepulesFerfiak2024" 
+                               FontSize="16" FontWeight="Bold"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0 10">
+                    <TextBlock Text="Népesség 2025-ben:" FontSize="16"/>
+                    <TextBlock x:Name="tbValasztottTelepulesNok2025" 
+                               FontSize="16" FontWeight="Bold" Margin="20 0 20 0"/>
+                    <TextBlock x:Name="tbValasztottTelepulesFerfiak2025" 
+                               FontSize="16" FontWeight="Bold"/>
+                </StackPanel>
+            </StackPanel>
+
+        </Border>
+
+        <!-- Kelezőgombok -->
+        <StackPanel Grid.Row="3" Grid.Column="2"
+                    Orientation="Vertical" VerticalAlignment="Center">
+            <!--Mentés (CSV) fájlba-->
+            <Button x:Name="btnCSVmentes" Content="Mentés (CSV) fájlba" 
+                    Margin="10 6" Height="40" FontSize="18" Background="SandyBrown" 
+                    Click="btnCSVmentes_Click" />
+            <!--Betöltés (CSV) fájlba-->
+            <Button x:Name="btnCSVtoltes" Content="Betöltés (CSV) fájlba" 
+                    Margin="10 6" Height="40" FontSize="18" Background="SandyBrown" 
+                    Click="btnCSVtoltes_Click" />
+            <!--Szűrő alaphelyzetbe állítása-->
+            <Button x:Name="btnSzuroAlaphelyzetbe" Content="Szűrő alaphelyzetbe állítása" 
+                    Margin="10 6" Height="40" FontSize="18" Background="SandyBrown" 
+                    Click="btnSzuroAlaphelyzetbe_Click"  />
+            <!--Település törlése-->
+            <Button x:Name="btnTorles" Content="Település törlése" 
+                    Margin="10 6" Height="40" FontSize="18" Background="SandyBrown" Click="btnTorles_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>
